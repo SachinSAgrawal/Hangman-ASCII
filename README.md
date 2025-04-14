@@ -1,7 +1,7 @@
-# Hangman
+# Hangman ASCII
 
 ## About
-Play the classic game of Hangman by guessing a secret word before the stick figure is hung! This Python implementation includes ASCII art visuals to represent the figure and post for incorrect guesses. The words are taken from a list of the 10,000 most common in the English language that longer than 4 letters. If you like this game, I would appreciate if you starred it or even shared it with your friends.
+Play the classic game of Hangman by guessing a secret word, with this Python implementation including optional ASCII art visuals to represent the figure and post. This game also has other options to configure the gameplay. If you like this game, I would appreciate if you starred it or even shared it with your friends.
 
 ## Instructions
 * You will be presented with a series of dashes representing the letters of a secret word.
@@ -12,7 +12,24 @@ Play the classic game of Hangman by guessing a secret word before the stick figu
 * Try to guess the word before the hangman is completed to win!
 
 ## Installation
-I would recommend running this on [Replit](https://replit.com/), as that is how I have been doing it. Just copy and paste the [mainCode.py](mainCode.py) and [wordList.txt](wordList.txt) files into a new project and hit run! You can also clone this repository and run it through terminal on a device with python installed.
+1. Clone this repository or download it as a zip folder and uncompress it.
+2. Navigate to the directory in Terminal that contains all the files. 
+3. Run `python3 mainCode.py` to start and follow the instructions above.
+
+#### Prerequisites
+Hopefully this goes without saying, but you need Python 3.x installed.
+
+#### Notes
+This can also be pretty easily run on [Replit](https://replit.com/) if you copy and paste all the associated files into a new project.
+
+## Configuration
+Modify the following options in the [config](config.json) file.
+
+- `useCuratedWords`: Whether or not to use a set of words curated by me. Otherwise, the words will be taken from a list of the 10,000 most common in the English language, but be warned that some of them may be NSFW.
+- `debugEnabled`: Whether or not to show the secret word at the start of the game.
+- `showVisuals`: Whether or not the ASCII visuals will be displayed.
+- `minWordLength`: If not using the curated words, the shortest a word can be.
+- `maxWordLength`: If not using the curated words, the longest a word can be.
 
 ## Contributors
 Sachin Agrawal: I'm a self-taught programmer who knows many languages and I'm into app, game, and web development. For more information, check out my website or Github profile. If you would like to contact me, my email is [github@sachin.email](mailto:github@sachin.email).

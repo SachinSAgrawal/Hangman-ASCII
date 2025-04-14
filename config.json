@@ -1,0 +1,7 @@
+{
+    "useCuratedWords": false,
+    "debugEnabled": false,
+    "showVisuals": true,
+    "minWordLength": 5,
+    "maxWordLength": 15
+}

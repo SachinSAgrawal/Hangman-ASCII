@@ -2,24 +2,37 @@
 Sachin Agrawal
 June 30th, 2021
 Hangman.py
-Play the classic game of hangman with ASCII art visuals!
+Play the classic game of Hangman by guessing a secret word with optional ASCII art visuals!
 '''
 
 import random
+import json
+from visuals import visual  # Import the visual function
 
-# List of curated words to choose from
-wordList = ["astronaut", "library", "police", "monkey", "raspberry", "standard", "globes", "javascript", "violin", "eunoia"]
-# Select a random word from the list
-secretWord = random.choice(wordList)
+# Load configuration from config.json
+with open('config.json') as config_file:
+    config = json.load(config_file)
 
-# Open a file containing the 10000 most common words to use as secret words
-with open('wordList.txt') as file:
-    # Read words from the file and split them into a list
-    commonWords = file.read().splitlines()
-# Filter out short words from the list of common words
-longWords = [word for word in commonWords if len(word) > 4]
-# Choose a random long word as the secret word
-secretWord = random.choice(longWords)
+# Determine the secret word based on the configuration
+if config.get("useCuratedWords", False):
+    # List of curated words to choose from
+    wordList = ["astronaut", "library", "police", "monkey", "raspberry", "standard", "globes", "javascript", "violin", "eunoia"]
+    # Select a random word from the list
+    secretWord = random.choice(wordList)
+else:
+    # Open a file containing the 10000 most common words to use as secret words
+    with open('wordList.txt') as file:
+        # Read words from the file and split them into a list
+        commonWords = file.read().splitlines()
+    # Filter words based on min and max length from the configuration
+    minLength = config.get("minWordLength", 5)
+    maxLength = config.get("maxWordLength", 15)
+    # Automatically swap bounds if minLength is greater than maxLength
+    if minLength > maxLength:
+        minLength, maxLength = maxLength, minLength
+    filteredWords = [word for word in commonWords if minLength <= len(word) <= maxLength]
+    # Choose a random word from the filtered list
+    secretWord = random.choice(filteredWords)
 
 # Function to update the dashes representing the secret word
 def updateDashes(secretWord, dashedWord, userGuess, incorrectCount):
@@ -49,6 +62,8 @@ def getGuess(guessedLetters):
 def update():
     # Initialize the dashed word representation of the secret word
     dashedWord = '_' * len(secretWord)
+    print("\n" + dashedWord)
+    print("\nYou have 8 incorrect tries remaining.")
     # Maximum number of incorrect tries allowed
     incorrectTries = 8
     # Set to store guessed letters
@@ -57,8 +72,9 @@ def update():
     incorrectCount = 0
     # Main game loop
     while incorrectTries > 0:
-        # Display the hangman visuals
-        visual(incorrectCount)
+        # Display the hangman visuals if enabled
+        if config.get("showVisuals", True):
+            visual(incorrectCount)
         # Get user's guess
         userGuess = getGuess(guessedLetters)
         # Update the dashed word and incorrect count based on the guess
@@ -66,118 +82,36 @@ def update():
         print("\n" + dashedWord)
         # Add the guessed letter to the set
         guessedLetters.add(userGuess)
-        # Calculate remaining incorrect tries
-        incorrectTries = 8 - incorrectCount
-        print("\nYou have", incorrectTries, "incorrect tries remaining.")
         # Check if the secret word has been guessed correctly
         if dashedWord == secretWord:
             print("\nCongratulations! You have guessed the word!")
+            if config.get("showVisuals", True):
+                visual(incorrectCount)
+            print("")
             break
+        # Calculate remaining incorrect tries
+        incorrectTries = 8 - incorrectCount
+        print("\nYou have", incorrectTries, "incorrect tries remaining.")
     # If the player runs out of tries without guessing the word
     if incorrectTries == 0 and dashedWord != secretWord:
-        visual(incorrectCount)
+        if config.get("showVisuals", True):
+            visual(incorrectCount)
         print("\nBetter luck next time!")
-        print("\nThe secret word is " + secretWord + ".")
+        print("\nThe secret word is " + secretWord + ".\n")
 
 # Main function to start the game
 def main():
-    print("Play a game of Hangman with ASCII art visuals!\n")
-    print("Try to guess the word in a certain number of tries.\n")
-    print("Good luck!\n")
+    # Print the secret word if debug mode is enabled
+    if config.get("debugEnabled", False):
+        print(f"\nDEBUG: The secret word is '{secretWord}'")
+    print("\nPlay the classic game of Hangman by guessing a secret word.")
+    if config.get("showVisuals", True):
+        print("\nASCII art visuals are currently enabled.")
+    else:
+        print("\nASCII art visuals are currently disabled.")
+    print("\nGood luck!")
     # Start the game
     update()
-
-# Function to display ASCII art visuals representing the hangman
-def visual(count):
-    if count == 0:
-        print('''
-               +---+
-               |   |
-                   |
-                   |
-                   |
-                   |
-             =========''')
-    elif count == 1:
-        print('''
-               +---+
-               |   |
-               O   |
-                   |
-                   |
-                   |
-                   |
-             =========''')
-    elif count == 2:
-        print('''
-               +---+
-               |   |
-               O   |
-               |   |
-                   |
-                   |
-                   |
-             =========''')
-    elif count == 3:
-        print('''
-               +---+
-               |   |
-               O   |
-              /|   |
-                   |
-                   |
-                   |
-             =========''')
-    elif count == 4:
-        print('''
-               +---+
-               |   |
-               O   |
-              /|\\  |
-                   |
-                   |
-                   |
-             =========''')
-    elif count == 5:
-        print('''
-               +---+
-               |   |
-               O   |
-              /|\\  |
-               |   |
-                   |
-                   |
-             =========''')
-    elif count == 6:
-        print('''
-               +---+
-               |   |
-               O   |
-              /|\\  |
-               |   |
-              /    |
-                   |
-             =========''')
-    elif count == 7:
-        print('''
-               +---+
-               |   |
-               O   |
-              /|\\  |
-               |   |
-              / \\  |
-                   |
-             =========''')
-    elif count == 8:
-        print('''
-               +---+
-               |   |
-               X   |
-              /|\\  |
-               |   |
-              / \\  |
-                   |
-             =========''')
 
 # Entry point of the program
 if __name__ == "__main__":
